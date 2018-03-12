@@ -18,6 +18,7 @@ TESTLIB += \
 
 SRC	+= \
 	console-program.cpp\
+	calculator.cpp\
 	lexer.cpp\
 	main.cpp\
 	parser.cpp
