@@ -13,24 +13,31 @@ class SYMBOL : public TYPE {};
 
 class Lexer {
 public:
-	static std::pair<char, std::string> readToken(std::string::iterator& current, const std::string::iterator& end) {
+	static std::pair<std::string, std::string> readToken(std::string::iterator& current, std::string::const_iterator& end) {
+		std::string token = "";
 		if (current != end) {
-			char token = *current;
-			if (isdigit(token)) {
+			char el = *current;
+			if (isdigit(el)) {
+				token.push_back(el);
 				current++;
-				return std::pair<char, std::string>(token, "number");
+				while (isdigit(*(current)) || *(current) == '.') {
+					token.push_back(*current);
+					current++;
+				}
+				return std::pair<std::string, std::string>(token, "number");
 			}
-			else if (token == '+' || token == '-' || token == '*' || token == '/') {
+			else if (el == '+' || el == '-' || el == '*' || el == '/' || el == '(' || el == ')') {
+				token.push_back(el);
 				current++;
-				return std::pair<char, std::string>(token, "symbol");
+				return std::pair<std::string, std::string>(token, "symbol");
 			}
-			else if (isspace(token)) {
+			else if (isspace(el)) {
 				current++;
-				return Lexer::readToken(current, end);
+				return readToken(current, end);
 			}
 		}
 		else {
-			return std::pair<char, std::string>(' ',"end of line");
+			return std::pair<std::string, std::string>(token,"end of line");
 		}
 	}
 };

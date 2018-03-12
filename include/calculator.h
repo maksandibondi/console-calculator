@@ -6,8 +6,8 @@
 class Calculator {
 public:
 	double calculate(std::string& expression) {
-		Parser _parser(expression);
-		return _parser.parse();
+		Parser _parser;
+		return _parser.parse(expression);
 	}
 
 };

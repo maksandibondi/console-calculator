@@ -5,35 +5,42 @@
 
 class Calculator;
 
-class Parser{
+class Parser {
 
 	friend Calculator;
 
-	std::pair<char, std::string> cur;
+	std::pair<std::string, std::string> cur;
 
 	std::string::iterator current;
 
-	const std::string::iterator end;
+	std::string::const_iterator end;
 
 	double parseExpression() {
 
 		double left = parseTerm();
 
-		current++;
-		cur = Lexer::readToken(current, end);
-
-		char _operator = cur.first;
+		std::string _operator = cur.first;
 		if (cur.second == "symbol") {
-			current++;
-			cur = Lexer::readToken(current, end);
+
 			double right = parseTerm();
 
-			if (_operator == '+') {
+			if (_operator == "+") {
 				left += right;
 				return left;
 			}
-			else if (_operator == '-') {
+			else if (_operator == "-") {
 				left -= right;
+				return left;
+			}
+			else if (_operator == "/") {
+				if (right == 0) {
+					throw std::runtime_error("division by 0");
+				}
+				left /= right;
+				return left;
+			}
+			else if (_operator == "*") {
+				left *= right;
 				return left;
 			}
 		}
@@ -45,18 +52,29 @@ class Parser{
 	double parseTerm() {
 
 		double left = parseFactor();
+		std::string _operator = cur.first;
 		if (cur.second == "symbol") {
-			// here is the problem
+			// here
+			//cur = Lexer::readToken(current, end);
 			double right = parseFactor();
-			if (cur.first == '*') {
+			if (_operator == "*") {
 				left *= right;
 				return left;
 			}
-			else if (cur.first == '/') {
+			else if (_operator == "/") {
 				if (right == 0) {
 					throw std::runtime_error("division by 0");
 				}
 				left /= right;
+				return left;
+			}
+			else if (_operator == "+") {
+				left += right;
+				return left;
+
+			}
+			else if (_operator == "-") {
+				left -= right;
 				return left;
 
 			}
@@ -68,48 +86,61 @@ class Parser{
 
 	double parseFactor() {
 		double value;
-		if (cur.first == '(' && cur.second == "symbol") {
+		if (cur.first == "(" && cur.second == "symbol") {
+			// here
 			cur = Lexer::readToken(current, end);
 			value = parseExpression();
-			if (cur.first != ')' || cur.second != "symbol") {
+			if (cur.first != ")" || cur.second != "symbol") {
 				throw std::runtime_error("wrong parenthesis");
 			}
 		}
 		else {
+			// here
 			value = parseNumber();
-		}
-		return value;
 
+		}
+		// here
+		//cur = Lexer::readToken(current, end);
+		return value;
 	}
 
 	double parseNumber() {
-
 
 			if (cur.second != "number") {
 				throw std::runtime_error("wrong semantics");
 			}
 			else {
-				double value = cur.first - 48; // substract ascii value
-				//cur = Lexer::readToken(current, end);
+				double value = std::stod(cur.first); // substract ascii value
+				cur = Lexer::readToken(current, end);
 				return value;
 			}
 	}
 
 public:
 
-	Parser(std::string& expression) :
-		current(expression.begin()),
-		end(expression.end()) {
+	Parser(){}
 
-	}
+	double parse(std::string& expression) {
+		double value = 0;
+		while (1) {
+			current = expression.begin();
+			end = expression.cend();
 
-	double parse() {
-		cur = Lexer::readToken(current, end);
-		if (cur.second != "end of line") {
-			return parseExpression();
-		}
-		else {
-			return parseExpression();
+
+			cur = Lexer::readToken(current, end); // first value in a string
+			if (cur.second != "end of line") {
+				value = parseExpression();
+				expression.erase(expression.begin(), current);
+				if (expression.begin() != expression.end()) {
+					expression.insert(expression.begin(), (*(std::to_string(value)).c_str()));
+				}
+				else {
+					return value;
+				}
+			}
+			else {
+				return value;
+			}
 		}
 
 	}
