@@ -2,148 +2,106 @@
 #define PARSER_H
 
 #include "lexer.h"
-
-class Calculator;
+#include <stack>
 
 class Parser {
 
-	friend Calculator;
-
-	std::pair<std::string, std::string> cur;
-
-	std::string::iterator current;
-
-	std::string::const_iterator end;
-
-	double parseExpression() {
-
-		double left = parseTerm();
-
-		std::string _operator = cur.first;
-		if (cur.second == "symbol") {
-
-			double right = parseTerm();
-
-			if (_operator == "+") {
-				left += right;
-				return left;
-			}
-			else if (_operator == "-") {
-				left -= right;
-				return left;
-			}
-			else if (_operator == "/") {
-				if (right == 0) {
-					throw std::runtime_error("division by 0");
-				}
-				left /= right;
-				return left;
-			}
-			else if (_operator == "*") {
-				left *= right;
-				return left;
-			}
-		}
-		else {
-			throw std::runtime_error("Wrong sematics");
-		}
+static bool isOperator(const std::string& token) {
+	if (token == std::string("+") ||
+		token == std::string("-") ||
+		token == std::string("*") ||
+		token == std::string("/")
+		) {
+		return true;
 	}
+	return false;
+}
 
-	double parseTerm() {
-
-		double left = parseFactor();
-		std::string _operator = cur.first;
-		if (cur.second == "symbol") {
-			// here
-			//cur = Lexer::readToken(current, end);
-			double right = parseFactor();
-			if (_operator == "*") {
-				left *= right;
-				return left;
-			}
-			else if (_operator == "/") {
-				if (right == 0) {
-					throw std::runtime_error("division by 0");
-				}
-				left /= right;
-				return left;
-			}
-			else if (_operator == "+") {
-				left += right;
-				return left;
-
-			}
-			else if (_operator == "-") {
-				left -= right;
-				return left;
-
-			}
-			else {
-				throw std::runtime_error("Wrong semantics");
-			}
-		}
-	}
-
-	double parseFactor() {
-		double value;
-		if (cur.first == "(" && cur.second == "symbol") {
-			// here
-			cur = Lexer::readToken(current, end);
-			value = parseExpression();
-			if (cur.first != ")" || cur.second != "symbol") {
-				throw std::runtime_error("wrong parenthesis");
-			}
-		}
-		else {
-			// here
-			value = parseNumber();
-
-		}
-		// here
-		//cur = Lexer::readToken(current, end);
-		return value;
-	}
-
-	double parseNumber() {
-
-			if (cur.second != "number") {
-				throw std::runtime_error("wrong semantics");
-			}
-			else {
-				double value = std::stod(cur.first); // substract ascii value
-				cur = Lexer::readToken(current, end);
-				return value;
-			}
-	}
+static int precedence(const std::string& op) {
+	if (op == std::string("(")) return 0;
+	if (op == std::string("+") || op == std::string("-")) return 1;
+	return 2;
+}
 
 public:
+	static Expression* parse(std::string input) {
+	std::string::iterator cur = input.begin();
+	std::string::const_iterator end = input.end();
 
-	Parser(){}
+	std::stack<Expression*> operands;
+	std::stack<std::string> operators;
 
-	double parse(std::string& expression) {
-		double value = 0;
-		while (1) {
-			current = expression.begin();
-			end = expression.cend();
-
-
-			cur = Lexer::readToken(current, end); // first value in a string
-			if (cur.second != "end of line") {
-				value = parseExpression();
-				expression.erase(expression.begin(), current);
-				if (expression.begin() != expression.end()) {
-					expression.insert(expression.begin(), (*(std::to_string(value)).c_str()));
-				}
-				else {
-					return value;
-				}
-			}
-			else {
-				return value;
-			}
+	while (cur != end) {
+		std::string token = Lexer::readToken(cur, end);
+		if (token == "(") {
+			operators.push(token);
 		}
 
+		else if (isdigit(*token.c_str())) {
+			operands.push(new Number(std::stod(token)));
+		}
+
+		else if (isOperator(token)) {
+
+				while (!operators.empty() && precedence(operators.top()) >= precedence(token)) {
+					const std::string& op = operators.top();
+					operators.pop();
+
+					Expression* exp2 = operands.top();
+					operands.pop();
+					Expression* exp1 = operands.top();
+					operands.pop();
+
+					if (token == std::string("+")) {
+						operands.push(new AddExpression(exp1, exp2));
+					}
+					else if (token == std::string("-")) {
+						operands.push(new MinusExpression(exp1, exp2));
+					}
+					else if (token == std::string("*")) {
+						operands.push(new MultExpression(exp1, exp2));
+					}
+					else if (token == std::string("/")) {
+						operands.push(new DivExpression(exp1, exp2));
+					}
+				}
+
+				operators.push(token);
+		}
+
+		else if (token == std::string(")")) {
+			while (operators.top() != std::string("(")) {
+				const std::string& op = operators.top();
+				operators.pop();
+
+				Expression* exp2 = operands.top();
+				operands.pop();
+				Expression* exp1 = operands.top();
+				operands.pop();
+
+				if (token == std::string("+")) {
+					operands.push(new AddExpression(exp1, exp2));
+				}
+				else if (token == std::string("-")) {
+					operands.push(new MinusExpression(exp1, exp2));
+				}
+				else if (token == std::string("*")) {
+					operands.push(new MultExpression(exp1, exp2));
+				}
+				else if (token == std::string("/")) {
+					operands.push(new DivExpression(exp1, exp2));
+				}
+			}
+			operators.pop();
+		}
+
+		else {
+			throw std::runtime_error("wrong semantics");
+		}
 	}
+
+	return operands.top();
+}
 
 };
 

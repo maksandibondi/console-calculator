@@ -17,6 +17,7 @@ TESTLIB += \
 	test/lib/libgtest.a
 
 SRC	+= \
+	expression.cpp\
 	console-program.cpp\
 	calculator.cpp\
 	lexer.cpp\
