@@ -44,7 +44,7 @@ public:
 		else if (isOperator(token)) {
 
 				while (!operators.empty() && precedence(operators.top()) >= precedence(token)) {
-					const std::string& op = operators.top();
+					const std::string op = operators.top();
 					operators.pop();
 
 					Expression* exp2 = operands.top();
@@ -71,7 +71,7 @@ public:
 
 		else if (token == std::string(")")) {
 			while (operators.top() != std::string("(")) {
-				const std::string& op = operators.top();
+				const std::string op = operators.top();
 				operators.pop();
 
 				Expression* exp2 = operands.top();
@@ -100,9 +100,33 @@ public:
 		}
 	}
 
+	if (!operators.empty()) {
+		const std::string op = operators.top();
+		operators.pop();
+
+		Expression* exp2 = operands.top();
+		operands.pop();
+		Expression* exp1 = operands.top();
+		operands.pop();
+
+		if (op == std::string("+")) {
+			operands.push(new AddExpression(exp1, exp2));
+		}
+		else if (op == std::string("-")) {
+			operands.push(new MinusExpression(exp1, exp2));
+		}
+		else if (op == std::string("*")) {
+			operands.push(new MultExpression(exp1, exp2));
+		}
+		else if (op == std::string("/")) {
+			operands.push(new DivExpression(exp1, exp2));
+		}
+	}
+
 	return operands.top();
 }
 
 };
+
 
 #endif
