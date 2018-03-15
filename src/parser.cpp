@@ -104,9 +104,9 @@ Expression* Parser::parse(std::string input) {
 					operands.push(new DivExpression(exp1, exp2));
 				}
 			}
-			if (!isOperator(operators.top())) {
+			/*if (!isOperator(operators.top())) {
 				throw std::runtime_error("Parser error: wrong semantics");
-			}
+			}*/
 			operators.pop();
 		}
 
