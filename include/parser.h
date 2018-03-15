@@ -6,11 +6,12 @@
 
 class Parser {
 
-static bool isOperator(const std::string& token);
+	static bool isOperator(const std::string& token);
 
-static int precedence(const std::string& op);
+	static int precedence(const std::string& op);
 
 public:
+
 	static Expression* parse(std::string input);
 
 };

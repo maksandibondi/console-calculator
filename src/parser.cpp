@@ -1,4 +1,4 @@
-#include "../include/parser.h"
+#include "parser.h"
 
 bool Parser::isOperator(const std::string& token) {
 	if (token == std::string("+") ||
@@ -21,7 +21,7 @@ Expression* Parser::parse(std::string input) {
 	std::string::iterator cur = input.begin();
 	std::string::const_iterator end = input.end();
 	if (cur == end) {
-		return nullptr;
+		return new Number(0);
 	}
 
 	std::stack<Expression*> operands;
@@ -43,8 +43,15 @@ Expression* Parser::parse(std::string input) {
 					const std::string op = operators.top();
 					operators.pop();
 
+					if (operands.empty()) {
+						throw std::runtime_error("Parser error: wrong semantics");
+					}
 					Expression* exp2 = operands.top();
 					operands.pop();
+
+					if (operands.empty()) {
+						throw std::runtime_error("Parser error: wrong semantics");
+					}
 					Expression* exp1 = operands.top();
 					operands.pop();
 
@@ -66,12 +73,21 @@ Expression* Parser::parse(std::string input) {
 		}
 
 		else if (token == std::string(")")) {
+			if (operators.empty()) {
+				throw std::runtime_error("Parser error: wrong semantics");
+			}
 			while (operators.top() != std::string("(")) {
 				const std::string op = operators.top();
 				operators.pop();
 
+				if (operands.empty()) {
+					throw std::runtime_error("Parser error: wrong semantics");
+				}
 				Expression* exp2 = operands.top();
 				operands.pop();
+				if (operands.empty()) {
+					throw std::runtime_error("Parser error: wrong semantics");
+				}
 				Expression* exp1 = operands.top();
 				operands.pop();
 
@@ -88,11 +104,14 @@ Expression* Parser::parse(std::string input) {
 					operands.push(new DivExpression(exp1, exp2));
 				}
 			}
+			if (!isOperator(operators.top())) {
+				throw std::runtime_error("Parser error: wrong semantics");
+			}
 			operators.pop();
 		}
 
 		else {
-			throw std::runtime_error("wrong semantics");
+			throw std::runtime_error("Parser error: wrong semantics");
 		}
 	}
 
@@ -100,8 +119,15 @@ Expression* Parser::parse(std::string input) {
 		const std::string op = operators.top();
 		operators.pop();
 
+		if (operands.empty()) {
+			throw std::runtime_error("Parser error: wrong semantics");
+		}
 		Expression* exp2 = operands.top();
 		operands.pop();
+
+		if (operands.empty()) {
+			throw std::runtime_error("Parser error: wrong semantics");
+		}
 		Expression* exp1 = operands.top();
 		operands.pop();
 
@@ -121,3 +147,4 @@ Expression* Parser::parse(std::string input) {
 
 	return operands.top();
 }
+

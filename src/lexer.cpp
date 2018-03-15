@@ -1,4 +1,4 @@
-#include "../include/lexer.h"
+#include "lexer.h"
 
 
 std::string Lexer::readToken(std::string::iterator& current, std::string::const_iterator& end) {
@@ -12,6 +12,7 @@ std::string Lexer::readToken(std::string::iterator& current, std::string::const_
 					while (isdigit(*(current)) || *(current) == '.') {
 						token.push_back(*current);
 						current++;
+						if (current == end) break;
 					}
 				}
 				return token;
@@ -24,6 +25,9 @@ std::string Lexer::readToken(std::string::iterator& current, std::string::const_
 			else if (isspace(el)) {
 				current++;
 				return readToken(current, end);
+			}
+			else {
+				throw std::runtime_error("Lexer error: wrong syntax");
 			}
 		}
 		else {
