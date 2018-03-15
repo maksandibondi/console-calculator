@@ -17,6 +17,7 @@ TESTLIB += \
 	test/lib/libgtest.a
 
 SRC	+= \
+	utilities.cpp\
 	expression.cpp\
 	console-program.cpp\
 	calculator.cpp\
@@ -43,8 +44,8 @@ TSTOBJ = $(patsubst %.cpp, $(TSTBIN)/%.o, $(TST))
 program.exe: $(OBJ)  
 	$(CC) $(GFLAGS) $? -o $@ 
 	
-test.exe: $(TSTOBJ) $(TESTLIB) $(BIN)/lexer.o
-	$(CC) $(GFLAGS) $(TESTLIB) $(BIN)/lexer.o $< -o $@
+test.exe: $(TSTOBJ) $(TESTLIB) $(BIN)/lexer.o $(BIN)/parser.o $(BIN)/calculator.o $(BIN)/utilities.o 
+	$(CC) $(GFLAGS) $(TESTLIB) $(BIN)/lexer.o $(BIN)/parser.o $(BIN)/calculator.o $(BIN)/utilities.o $< -o $@
 
 $(BIN)/%.o: src/%.cpp 
 	$(CC) $(CPPFLAGS) -I$(INC_DIR) $< -o $@ 
