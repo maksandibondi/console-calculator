@@ -2,27 +2,41 @@
 
 void ConsoleProgram::run(){
 	Calculator _calc;
+	std::string userCommand;
 	std::string userInput;
+	std::cout << "Calculator >>";
 
-	while (1){
+	while (1) {
+		if (!_calc.is_empty()){
+			std::getline(std::cin, userCommand);
+			userInput = std::to_string(_calc.memory) + " " + userCommand;
+		}
+		else {
+			std::getline(std::cin, userCommand);
+			userInput = userCommand;
+		}
 
+		if (userCommand == std::string("exit")) {
+			return;
+		}
+
+		if (userCommand == std::string("clear")) {
+			_calc.clear();
+			std::cout << std::endl;
 			std::cout << "Calculator >>";
-			std::getline(std::cin, userInput);
-
-			if (userInput == std::string("exit")) {
-				return;
-			}
-
-			try {
-				double result = _calc.calculate(userInput);
-				std::cout << "result = " << result << std::endl;
-			}
-			catch (std::runtime_error& ex) {
-				std::cout << ex.what() << std::endl;
-			}
-
-
 			continue;
 		}
+
+		try {
+			double result = _calc.calculate(userInput);
+			std::cout << " = " << result << " ";
+		}
+		catch (std::runtime_error& ex) {
+			std::cout << ex.what() << std::endl;
+		}
+
+
+		continue;
+	}
 
 }

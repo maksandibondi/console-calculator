@@ -1,6 +1,8 @@
 #include "calculator.h"
 
 double Calculator::calculate(std::string& expression) {
-		return Utilities::traverse(Parser::parse(expression));
+		double result = Utilities::traverse(Parser::parse(expression));
+		memory = result;
+		empty = false;
+		return result;
 }
-
