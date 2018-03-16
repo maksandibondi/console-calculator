@@ -6,3 +6,12 @@ double Calculator::calculate(std::string& expression) {
 		empty = false;
 		return result;
 }
+
+void Calculator::clear() {
+		memory = 0;
+		empty = true;
+}
+
+bool Calculator::is_empty(){
+		return empty;
+}

@@ -9,12 +9,7 @@ class Calculator {
 public:
 	double memory;
 	double calculate(std::string& expression);
-	void clear() {
-		memory = 0;
-		empty = true;
-	}
-	bool is_empty(){
-		return empty;
-	}
+	void clear();
+	bool is_empty();
 };
 #endif
