@@ -33,6 +33,7 @@ void ConsoleProgram::run(){
 		}
 		catch (std::runtime_error& ex) {
 			std::cout << ex.what() << std::endl;
+			std::cout << "Calculator >>";
 		}
 
 
