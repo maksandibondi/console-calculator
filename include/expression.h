@@ -1,76 +1,84 @@
 #ifndef _EXPRESSION_H_
 #define _EXPRESSION_H_
+#include <memory>
+
+class Expression;
+
+typedef std::shared_ptr<Expression> ptr_expression;
 
 class Expression {
 protected:
 	Expression() {}
-	Expression(double value) : value(value) {} // Number case
-	Expression(Expression* left) : left(left) {} // Unary case
-	Expression(Expression* left, Expression* right): left(left), right(right) {} // Binary case
-	double value;
-	Expression* left;
-	Expression* right;
-	virtual ~Expression(){
-		delete left;
-		delete right;
-	}
+	virtual ~Expression() {}
 public:
-	virtual double getValue() = 0;
+	virtual double eval() = 0;
 };
 
 class BinaryExpression : public Expression {
 protected:
-	BinaryExpression(Expression* left, Expression* right) : Expression(left, right){}
+	ptr_expression left;
+	ptr_expression right;
+public:
+	BinaryExpression(ptr_expression left, ptr_expression right) : left(left), right(right) {}
 };
 
 class UnaryExpression : public Expression {
 protected:
-	UnaryExpression(double value): Expression(value){}
-	UnaryExpression(Expression* left) : Expression(left) {}
+	ptr_expression exp;
+public:
+	UnaryExpression(ptr_expression exp): exp(exp) {}
+};
+
+class Number : public Expression {
+	const double value;
+public:
+	Number(double value) : value(value) {}
+
+	double eval() const {
+		return value;
+	}
 };
 
 class AddExpression: public BinaryExpression {
+	~AddExpression() {}
 public:
-	AddExpression(Expression* left, Expression* right): BinaryExpression(left,right) {}
-	~AddExpression(){};
-	double getValue() {
-		return left->getValue() + right->getValue();
+	double eval() {
+		return left->eval() + right->eval();
 	}
 };
 
 class MinusExpression : public BinaryExpression {
-public:
-	MinusExpression(Expression* left, Expression* right) : BinaryExpression(left, right) {}
 	~MinusExpression() {};
-	double getValue() {
-		return left->getValue() - right->getValue();
+public:
+	double eval() {
+		return left->eval() - right->eval();
 	}
 };
 
 class MultExpression : public BinaryExpression {
+	~MultExpression() {}
 public:
-	MultExpression(Expression* left, Expression* right) : BinaryExpression(left, right) {}
-	~MultExpression() {};
-	double getValue() {
-		return left->getValue() * right->getValue();
+	double eval() {
+		return left->eval() * right->eval();
 	}
 };
 
 class DivExpression : public BinaryExpression {
+	~DivExpression() {}
 public:
-	DivExpression(Expression* left, Expression* right) : BinaryExpression(left, right) {}
-	~DivExpression() {};
-	double getValue() {
-		return left->getValue() / right->getValue();
+	double eval() {
+		return left->eval() / right->eval();
 	}
 };
 
-class Number : public UnaryExpression {
+/*------------------------*/
+// To do
+class SqrExpression : public UnaryExpression {
+	~SqrExpression() {};
 public:
-	Number(double value): UnaryExpression(value) {}
-	~Number(){}
-	double getValue() {
-		return value;
+	double eval() {
+		double a = exp->eval();
+		return a*a;
 	}
 };
 
