@@ -1,5 +1,5 @@
 #include "utilities.h"
 
-double Utilities::traverse(Expression* root) {
-		return root->getValue();
+double Utilities::traverse(std::shared_ptr<Expression> root) {
+		return root->eval();
 }

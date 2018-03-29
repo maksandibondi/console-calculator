@@ -21,18 +21,17 @@ class CalculatorTest : public::testing::Test{
 
 TEST_F(LexerTest, should_return_0) {
 		std::string str = "0";
-		std::string::iterator cur = str.begin();
-		std::string::const_iterator end = str.end();
-		std::string res = Lexer::readToken(cur,end);
+		Lexer lex(str);
+		std::string res = lex.readToken().second;
 		ASSERT_EQ(str, res);
 }
 
 TEST_F(LexerTest, should_return_plus) {
 		std::string str = "0+2";
-		std::string::iterator cur = str.begin();
-		std::string::const_iterator end = str.end();
-		std::string res = Lexer::readToken(cur,end);
-		res = Lexer::readToken(cur,end);
+		Lexer lex(str);
+		std::string first = lex.readToken().second;
+		lex.next();
+		std::string res = lex.readToken().second;
 		ASSERT_EQ("+", res);
 }
 

@@ -4,7 +4,7 @@
 
 class Utilities {
 public:
-	static double traverse(Expression* root);
+	static double traverse(std::shared_ptr<Expression> root);
 };
 
 #endif

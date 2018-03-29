@@ -11,7 +11,7 @@ protected:
 	Expression() {}
 	virtual ~Expression() {}
 public:
-	virtual double eval() = 0;
+	virtual double eval() const = 0;
 };
 
 class BinaryExpression : public Expression {
@@ -29,10 +29,11 @@ public:
 	UnaryExpression(ptr_expression exp): exp(exp) {}
 };
 
-class Number : public Expression {
+class NumberExpression : public Expression {
+protected:
 	const double value;
 public:
-	Number(double value) : value(value) {}
+	NumberExpression(double value) : value(value) {}
 
 	double eval() const {
 		return value;
@@ -40,33 +41,37 @@ public:
 };
 
 class AddExpression: public BinaryExpression {
-	~AddExpression() {}
+	//~AddExpression() {}
 public:
-	double eval() {
+	AddExpression(ptr_expression left, ptr_expression right) : BinaryExpression(left, right) {}
+	double eval() const {
 		return left->eval() + right->eval();
 	}
 };
 
 class MinusExpression : public BinaryExpression {
-	~MinusExpression() {};
+	//~MinusExpression() {};
 public:
-	double eval() {
+	MinusExpression(ptr_expression left, ptr_expression right) : BinaryExpression(left, right) {}
+	double eval() const {
 		return left->eval() - right->eval();
 	}
 };
 
 class MultExpression : public BinaryExpression {
-	~MultExpression() {}
+	//~MultExpression() {}
 public:
-	double eval() {
+	MultExpression(ptr_expression left, ptr_expression right) : BinaryExpression(left, right) {}
+	double eval() const {
 		return left->eval() * right->eval();
 	}
 };
 
 class DivExpression : public BinaryExpression {
-	~DivExpression() {}
+	//~DivExpression() {}
 public:
-	double eval() {
+	DivExpression(ptr_expression left, ptr_expression right) : BinaryExpression(left, right) {}
+	double eval() const {
 		return left->eval() / right->eval();
 	}
 };
@@ -81,5 +86,9 @@ public:
 		return a*a;
 	}
 };
+
+
+
+
 
 #endif

@@ -1,7 +1,10 @@
 #include "calculator.h"
 
 double Calculator::calculate(std::string& expression) {
-		double result = Utilities::traverse(Parser::parse(expression));
+		Lexer lex(expression);
+		Parser parser(lex);
+		ptr_expression ast = parser.parse();
+		double result = Utilities::traverse(ast);
 		memory = result;
 		empty = false;
 		return result;
@@ -10,8 +13,9 @@ double Calculator::calculate(std::string& expression) {
 void Calculator::clear() {
 		memory = 0;
 		empty = true;
-}
+	}
 
-bool Calculator::is_empty(){
+bool Calculator::is_empty() {
 		return empty;
 }
+

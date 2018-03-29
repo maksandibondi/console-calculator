@@ -3,16 +3,33 @@
 
 #include "lexer.h"
 #include <stack>
+typedef std::shared_ptr<Expression> ptr_expression;
 
 class Parser {
 
-	static bool isOperator(const std::string& token);
+	Lexer& lex;
 
-	static int precedence(const std::string& op);
+	std::stack<ptr_expression> operands;
+
+	std::stack<SymbolList> operators;
+
+	std::pair<bool, ptr_expression> accept(SymbolList sym);
+
+	std::pair<bool, ptr_expression> expect(SymbolList sym);
+
+	void next();
+
+	ptr_expression parseExpression();
+
+	ptr_expression parseTerm();
+
+	ptr_expression parseFactor();
 
 public:
 
-	static Expression* parse(std::string input);
+	Parser(Lexer& lex): lex(lex){}
+
+	ptr_expression parse();
 
 };
 

@@ -20,12 +20,6 @@ void ConsoleProgram::run(){
 			return;
 		}
 
-		if (userCommand == std::string("help")) {
-			std::cout << "This is calculators help: enter a valid expression after Calculator> sign. \n You can continue to write an expression after obtaining an intermediate result. \n To start writing new expression push enter\ to reinitialize calculator write clear" << std::endl;
-			std::cout << "Calculator >>";
-			continue;
-		}
-
 		if (userCommand == std::string("clear")) {
 			_calc.clear();
 			std::cout << std::endl;
