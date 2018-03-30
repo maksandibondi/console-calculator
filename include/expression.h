@@ -1,6 +1,7 @@
 #ifndef _EXPRESSION_H_
 #define _EXPRESSION_H_
 #include <memory>
+#include <stdexcept>
 
 class Expression;
 
@@ -72,7 +73,11 @@ class DivExpression : public BinaryExpression {
 public:
 	DivExpression(ptr_expression left, ptr_expression right) : BinaryExpression(left, right) {}
 	double eval() const {
-		return left->eval() / right->eval();
+		double rvalue = right->eval();
+		if (rvalue == 0) {
+			throw std::runtime_error("division by zero");
+		}
+		return left->eval() / rvalue;
 	}
 };
 
