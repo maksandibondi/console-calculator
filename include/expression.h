@@ -2,6 +2,7 @@
 #define _EXPRESSION_H_
 #include <memory>
 #include <stdexcept>
+#include <cmath>
 
 class Expression;
 
@@ -86,13 +87,22 @@ public:
 class SqrExpression : public UnaryExpression {
 	~SqrExpression() {};
 public:
+	SqrExpression(ptr_expression exp) : UnaryExpression(exp) {}
 	double eval() {
-		double a = exp->eval();
-		return a*a;
+		double result = exp->eval();
+		return result*result;
 	}
 };
 
-
+class LogExpression : public UnaryExpression {
+	~LogExpression() {};
+public:
+	LogExpression(ptr_expression exp) : UnaryExpression(exp) {}
+	double eval() {
+		double result = exp->eval();
+		return log(result);
+	}
+};
 
 
 
